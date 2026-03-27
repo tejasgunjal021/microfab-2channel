@@ -1,0 +1,23 @@
+{
+  "timestamp": "2026-03-27T04:53:40.376Z",
+  "count": 5,
+  "govLatencies": [
+    323,
+    227,
+    201,
+    220,
+    194
+  ],
+  "investLatencies": [
+    251,
+    210,
+    219,
+    286,
+    231
+  ],
+  "summary": {
+    "avgGov": "233.00",
+    "avgInvest": "239.40",
+    "totalTime": 2362
+  }
+}
