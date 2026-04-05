@@ -31,7 +31,7 @@ app.use('/api/dispute', disputeRoutes);
 // Performance Test API
 app.get('/api/performance/run', async (req, res) => {
   try {
-    const results = await runPerfTest(5); // Run 5 tx per channel for quick demo
+    const results = await runPerfTest(500); // 500 tx per channel = 1000 total transactions
     res.json({ success: true, results });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });

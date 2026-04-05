@@ -170,3 +170,29 @@ FAIL,Dispute resolution failed
 PASS,Duplicate dispute correctly rejected
 PASS,Unvalidated startup correctly blocked from creating project
 PASS,Unvalidated investor correctly blocked from funding
+PASS,Duplicate startup registration correctly rejected
+PASS,Duplicate investor registration correctly rejected
+PASS,Investor with income below 500000 correctly rejected
+PASS,Rejected project state updated correctly
+PASS,Cannot approve already rejected project
+PASS,Zero amount funding correctly rejected
+FAIL,Refund failed
+PASS,Double refund correctly rejected
+PASS,Dispute raised successfully within window
+FAIL,Dispute resolution failed
+PASS,Duplicate dispute correctly rejected
+PASS,Unvalidated startup correctly blocked from creating project
+PASS,Unvalidated investor correctly blocked from funding
+PASS,Duplicate startup registration correctly rejected
+PASS,Duplicate investor registration correctly rejected
+PASS,Investor with income below 500000 correctly rejected
+PASS,Rejected project state updated correctly
+PASS,Cannot approve already rejected project
+PASS,Zero amount funding correctly rejected
+FAIL,Refund failed
+PASS,Double refund correctly rejected
+PASS,Dispute raised successfully within window
+FAIL,Dispute resolution failed
+PASS,Duplicate dispute correctly rejected
+PASS,Unvalidated startup correctly blocked from creating project
+PASS,Unvalidated investor correctly blocked from funding

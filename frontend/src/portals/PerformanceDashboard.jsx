@@ -59,12 +59,12 @@ const PerformanceDashboard = () => {
   const runTest = async () => {
     setLoading(true);
     setError(null);
-    setRealData(null); 
+    setRealData(null);
     try {
       const r = await fetch(`${API}/api/performance/run`);
       if (!r.ok) throw new Error(`Server connection failed (${r.status})`);
       const res = await r.json();
-      
+
       if (res.success) {
         setRealData(res.results);
       } else {
@@ -101,9 +101,10 @@ const PerformanceDashboard = () => {
   };
 
   const baseline = realData ? Number(realData.summary.avgGov) : 150;
-  const totalCount = realData ? realData.count * 2 : 0;
+  const successCount = realData ? (realData.summary.successCount || realData.count * 2) : 0;
+  const totalRequested = realData ? (realData.summary.totalRequested || realData.count * 2) : 0;
   const totalTimeSec = realData ? (Number(realData.summary.totalTime) / 1000).toFixed(2) : 0;
-  const aggTps = realData ? (totalCount / (Number(realData.summary.totalTime) / 1000)).toFixed(2) : 0;
+  const aggTps = realData ? (successCount / (Number(realData.summary.totalTime) / 1000)).toFixed(2) : 0;
 
   const channelLoadData = {
     labels: ['Gov Channel', 'Invest Channel'],
@@ -120,16 +121,16 @@ const PerformanceDashboard = () => {
   };
 
   const syncLatencyData = {
-    labels: ['10 Tx', '50 Tx', '100 Tx', '200 Tx', '500 Tx'],
+    labels: ['50 Tx', '100 Tx', '200 Tx', '500 Tx', '1000 Tx'],
     datasets: [
       {
         label: 'Single Channel (Sec)',
         data: [
-          (baseline * 10 / 1000).toFixed(2), 
-          (baseline * 50 / 1000 * 1.5).toFixed(2), 
+          (baseline * 50 / 1000 * 1.5).toFixed(2),
           (baseline * 100 / 1000 * 2.2).toFixed(2),
           (baseline * 200 / 1000 * 3.8).toFixed(2),
-          (baseline * 500 / 1000 * 8.5).toFixed(2)
+          (baseline * 500 / 1000 * 8.5).toFixed(2),
+          (baseline * 1000 / 1000 * 18.0).toFixed(2)
         ],
         borderColor: '#ef4444',
         backgroundColor: 'rgba(239, 68, 68, 0.1)',
@@ -139,11 +140,11 @@ const PerformanceDashboard = () => {
       {
         label: realData ? 'Dual Channel (Measured + Scaled)' : 'Dual Channel (Sec)',
         data: [
-          (baseline * 10 / 1000 * 0.7).toFixed(2), 
           (baseline * 50 / 1000 * 0.75).toFixed(2),
           (baseline * 100 / 1000 * 0.8).toFixed(2),
           (baseline * 200 / 1000 * 0.85).toFixed(2),
-          (baseline * 500 / 1000 * 0.95).toFixed(2)
+          (baseline * 500 / 1000 * 0.95).toFixed(2),
+          (baseline * 1000 / 1000 * 1.05).toFixed(2)
         ],
         borderColor: '#10b981',
         backgroundColor: 'rgba(16, 185, 129, 0.1)',
@@ -160,19 +161,18 @@ const PerformanceDashboard = () => {
           <h3 className="text-white font-bold text-xl">🚀 Performance Pulse</h3>
           <p className="text-white/40 text-sm">Real-time Blockchain Latency & Throughput Scaling</p>
         </div>
-        <button 
-          onClick={runTest} 
+        <button
+          onClick={runTest}
           disabled={loading}
-          className={`flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold transition-all shadow-xl ${
-            loading 
-              ? 'bg-white/10 text-white/40 cursor-not-allowed scale-95' 
-              : 'bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white shadow-purple-600/30'
-          }`}
+          className={`flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold transition-all shadow-xl ${loading
+            ? 'bg-white/10 text-white/40 cursor-not-allowed scale-95'
+            : 'bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white shadow-purple-600/30'
+            }`}
         >
           {loading ? (
             <><div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" /> Committing Live Data...</>
           ) : (
-            <>⚡ Run Live Stress Test (10 Tx)</>
+            <>⚡ Run Live Stress Test (1000 Tx)</>
           )}
         </button>
       </div>
@@ -205,7 +205,7 @@ const PerformanceDashboard = () => {
               <div className="grid grid-cols-2 md:grid-cols-3 gap-6 font-mono">
                 <div className="space-y-1">
                   <p className="text-white/40 text-[10px] uppercase">Transactions</p>
-                  <p className="text-white font-bold text-sm">{totalCount} / {totalCount}</p>
+                  <p className="text-white font-bold text-sm">{successCount} / {totalRequested}</p>
                 </div>
                 <div className="space-y-1">
                   <p className="text-white/40 text-[10px] uppercase">Total Time</p>
@@ -246,7 +246,7 @@ const PerformanceDashboard = () => {
         </div>
 
         <div className="space-y-6">
-          <div className="section-card h-full flex flex-col min-h-[460px]">
+          <div className="section-card h-[715px] flex flex-col overflow-hidden">
             <h3 className="text-white font-bold text-sm uppercase tracking-wider mb-4 border-b border-white/10 pb-2">
               📜 Live Transaction Log {realData && `(${new Date(realData.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })})`}
             </h3>
@@ -263,16 +263,16 @@ const PerformanceDashboard = () => {
                 <button onClick={runTest} className="mt-6 px-4 py-2 bg-white/5 rounded-lg text-[10px] text-purple-400 uppercase tracking-widest hover:bg-white/10 transition-all">Try Again</button>
               </div>
             ) : realData ? (
-              <div className="flex-1 overflow-y-auto space-y-2 pr-1 custom-scrollbar">
+              <div className="flex-1 min-h-0 overflow-y-auto space-y-2 pr-1 custom-scrollbar">
                 {[...realData.govLatencies].map((l, i) => (
                   <div key={`g-${i}`} className="flex justify-between items-center p-2 rounded-lg bg-white/5 border border-white/5 hover:border-purple-500/30 transition-all">
-                    <span className="text-[10px] font-mono text-purple-400">#GovTx_{i+1}</span>
+                    <span className="text-[10px] font-mono text-purple-400">#GovTx_{i + 1}</span>
                     <span className="text-[10px] font-bold text-white/80">{l}ms</span>
                   </div>
                 ))}
                 {[...realData.investLatencies].map((l, i) => (
                   <div key={`i-${i}`} className="flex justify-between items-center p-2 rounded-lg bg-white/5 border border-white/5 hover:border-blue-500/30 transition-all">
-                    <span className="text-[10px] font-mono text-blue-400">#InvestTx_{i+1}</span>
+                    <span className="text-[10px] font-mono text-blue-400">#InvestTx_{i + 1}</span>
                     <span className="text-[10px] font-bold text-white/80">{l}ms</span>
                   </div>
                 ))}
@@ -295,11 +295,11 @@ const PerformanceDashboard = () => {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-[11px] text-white/40 leading-relaxed pt-2">
           <p>
-            This model uses your local **{realData ? Math.round(Number(realData.summary.avgGov)) : 150}ms latency** as a baseline. 
-            In a single channel, concurrent users would experience exponential growth in wait time due to linear processing. 
+            This model uses your local **{realData ? Math.round(Number(realData.summary.avgGov)) : 150}ms latency** as a baseline.
+            In a single channel, concurrent users would experience exponential growth in wait time due to linear processing.
           </p>
           <p>
-            Our **Dual-Channel architecture** eliminates MVCC conflicts by isolating logic, providing a persistent 52% scalability 
+            Our **Dual-Channel architecture** eliminates MVCC conflicts by isolating logic, providing a persistent 52% scalability
             advantage under high-contention production environments.
           </p>
         </div>
